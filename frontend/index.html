@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description"
+    content="AI Vision Guide — real-time assistive navigation for the visually impaired using AI-powered obstacle detection and voice guidance." />
+  <title>AI Vision Guide</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+  <!-- ── Animated background blobs ── -->
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+
+  <div id="app">
+    <!-- Header -->
+    <header>
+      <div class="logo">
+        <span class="logo-icon">👁️</span>
+        <h1>AI Vision Guide</h1>
+      </div>
+      <p class="tagline">Real-time assistive navigation — zero hardware required</p>
+    </header>
+
+    <!-- Camera source selector -->
+    <div id="camera-source">
+      <div class="source-toggle">
+        <button id="src-webcam" class="src-btn src-btn--active" aria-label="Use laptop webcam">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" />
+            <line x1="8" y1="21" x2="16" y2="21" />
+            <line x1="12" y1="17" x2="12" y2="21" />
+          </svg>
+          Webcam
+        </button>
+        <button id="src-phone" class="src-btn" aria-label="Use phone IP camera">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="5" y="2" width="14" height="20" rx="2" />
+            <line x1="12" y1="18" x2="12" y2="18" />
+          </svg>
+          Phone Camera
+        </button>
+      </div>
+      <div id="ip-input-row" class="ip-input-row" style="display:none;">
+        <input id="ip-url" type="url" class="ip-input" placeholder="http://192.168.1.5:8080/shot.jpg"
+          spellcheck="false" />
+        <button id="btn-test-url" class="btn btn-outline btn-sm" aria-label="Test URL">Test</button>
+      </div>
+      <p id="ip-hint" class="ip-hint" style="display:none;">
+        📱 Open <strong>IP Webcam</strong> or <strong>DroidCam</strong> on your phone, connect to the same Wi-Fi, and
+        paste the snapshot URL above.
+      </p>
+    </div>
+
+    <!-- Main viewport -->
+    <main>
+      <div id="video-container">
+        <video id="camera" autoplay playsinline muted></video>
+        <canvas id="overlay-canvas"></canvas>
+        <div id="status-badge" class="badge badge--idle">
+          <span class="badge-dot"></span>
+          <span id="status-text">Idle</span>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div id="controls">
+        <button id="btn-start" class="btn btn-primary" aria-label="Start detection">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <polygon points="5,3 19,12 5,21" />
+          </svg>
+          Start
+        </button>
+        <button id="btn-stop" class="btn btn-danger" disabled aria-label="Stop detection">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+            <rect x="4" y="4" width="16" height="16" rx="2" />
+          </svg>
+          Stop
+        </button>
+        <button id="btn-rotate" class="btn btn-outline" aria-label="Rotate camera view">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M1 4v6h6" />
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10" />
+          </svg>
+          <span id="rotate-label">Rotate</span>
+        </button>
+        <button id="btn-mute" class="btn btn-outline" aria-label="Mute voice guidance">
+          <svg id="icon-unmuted" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2">
+            <polygon points="11,5 6,9 2,9 2,15 6,15 11,19" />
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+          </svg>
+          <svg id="icon-muted" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="2" style="display:none">
+            <polygon points="11,5 6,9 2,9 2,15 6,15 11,19" />
+            <line x1="23" y1="9" x2="17" y2="15" />
+            <line x1="17" y1="9" x2="23" y2="15" />
+          </svg>
+          <span id="mute-label">Mute</span>
+        </button>
+      </div>
+
+      <!-- Detection feed -->
+      <section id="detections-panel">
+        <h2>Live Detections</h2>
+        <div id="detections-list">
+          <p class="empty-state">Press <strong>Start</strong> to begin scanning…</p>
+        </div>
+      </section>
+
+      <!-- Stats bar -->
+      <section id="stats-bar">
+        <div class="stat">
+          <span class="stat-label">Latency</span>
+          <span id="stat-latency" class="stat-value">— ms</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Frames</span>
+          <span id="stat-frames" class="stat-value">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Skipped</span>
+          <span id="stat-skipped" class="stat-value">0</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">Objects</span>
+          <span id="stat-objects" class="stat-value">0</span>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Built for <strong>Cognithon AI Hackathon</strong> @ IIIT Bhagalpur &nbsp;|&nbsp; Nalanda College of Engineering
+      </p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+
+</html>
