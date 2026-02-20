@@ -514,3 +514,59 @@ footer {
     font-size: 1rem;
   }
 }
+
+/* ── Priority detection cards (wall, stairs) ──────────────────── */
+.det-card--priority {
+  border-color: rgba(255, 71, 87, 0.5);
+  background: rgba(255, 71, 87, 0.07);
+  box-shadow: 0 0 12px rgba(255, 71, 87, 0.15);
+  animation: fadeSlideIn .3s ease-out both, priorityPulse 2s ease-in-out infinite;
+}
+
+@keyframes priorityPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(255, 71, 87, 0.15);
+  }
+
+  50% {
+    box-shadow: 0 0 18px rgba(255, 71, 87, 0.40);
+  }
+}
+
+.det-card--priority .det-icon {
+  background: rgba(255, 71, 87, 0.2);
+}
+
+/* ── URGENT detection cards (drop-off, pit) ───────────────────── */
+.det-card--urgent {
+  border-color: rgba(255, 0, 0, 0.8);
+  background: rgba(255, 0, 0, 0.12);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.4);
+  animation: fadeSlideIn .2s ease-out both, urgentPulse 0.5s ease-in-out infinite;
+}
+
+@keyframes urgentPulse {
+
+  0%,
+  100% {
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.3);
+    border-color: rgba(255, 0, 0, 0.6);
+  }
+
+  50% {
+    box-shadow: 0 0 30px rgba(255, 0, 0, 0.7);
+    border-color: rgba(255, 0, 0, 1);
+  }
+}
+
+.det-card--urgent .det-icon {
+  background: rgba(255, 0, 0, 0.3);
+  animation: urgentPulse 0.5s ease-in-out infinite;
+}
+
+.det-card--urgent .det-label {
+  color: #ff4444;
+  font-weight: 800;
+}

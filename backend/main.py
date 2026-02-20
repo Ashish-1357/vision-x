@@ -72,7 +72,7 @@ async def proxy_camera(
         raw, error = _fetch_phone_image(url)
         if error:
             return None, error
-        return _correct_phone_image(raw, max_dim=960, force_rotation=rotation), None
+        return _correct_phone_image(raw, max_dim=0, force_rotation=rotation), None
 
     data, error = await loop.run_in_executor(None, fetch_and_correct)
     if error:
@@ -127,12 +127,12 @@ def _correct_phone_image(jpeg_bytes: bytes, max_dim: int = 640, force_rotation: 
     elif force_rotation == 270:
         img = img.rotate(-270, expand=True)
 
-    # Resize if too large
+    # Resize if too large (max_dim=0 means no resize — use native resolution)
     if max_dim and max(img.size) > max_dim:
         img.thumbnail((max_dim, max_dim), Image.LANCZOS)
 
     buf = io.BytesIO()
-    img.save(buf, format="JPEG", quality=80)
+    img.save(buf, format="JPEG", quality=85)
     return buf.getvalue()
 
 
